@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\UserType;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -23,9 +24,13 @@ class UserFactory extends Factory
      */
     public function definition(): array
     {
+        $userType = fake()->randomElement([UserType::Common, UserType::Logist]);
+
         return [
             'name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
+            'identifier' => $userType === UserType::Common ? fake()->unique()->cpf(false) : fake()->unique()->cnpj(false),
+            'type' => $userType,
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
@@ -39,6 +44,28 @@ class UserFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'email_verified_at' => null,
+        ]);
+    }
+
+    /**
+     * Indicate that the model's type is common.
+     */
+    public function common(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'type' => UserType::Common,
+            'identifier' => fake()->unique()->cpf(false),
+        ]);
+    }
+
+    /**
+     * Indicate that the model's type is common.
+     */
+    public function logist(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'type' => UserType::Logist,
+            'identifier' => fake()->unique()->cnpj(false),
         ]);
     }
 }
