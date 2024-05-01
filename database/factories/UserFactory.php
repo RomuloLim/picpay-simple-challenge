@@ -29,7 +29,7 @@ class UserFactory extends Factory
         return [
             'name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
-            'identifier' => $userType === UserType::Common ? fake()->unique()->cpf(false) : fake()->unique()->cnpj(false),
+            'identifier' => $userType === UserType::Common ? fake('pt_BR')->unique()->cpf(false) : fake('pt_BR')->unique()->cnpj(false),
             'type' => $userType,
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
