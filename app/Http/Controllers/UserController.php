@@ -2,12 +2,23 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Http\Requests\User\CreateRequest;
+use Illuminate\Auth\Events\Registered;
+use Illuminate\Http\Resources\Json\JsonResource;
+
+use App\Models\User;
+use App\Http\Resources\UserResource;
 
 class UserController extends Controller
 {
-    public function store()
+    public function store(CreateRequest $request): JsonResource
     {
-        ds('store');
+        $data = $request->validated();
+
+        $user = User::create($data);
+
+        event(new Registered($user));
+
+        return new UserResource($user);
     }
 }
