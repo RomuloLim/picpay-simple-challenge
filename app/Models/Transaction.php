@@ -6,6 +6,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @mixin IdeHelperTransaction
+ */
 class Transaction extends Model
 {
     use HasFactory;
@@ -22,7 +25,7 @@ class Transaction extends Model
 
     protected $casts = [
         'is_successful' => 'boolean',
-        'completed_at' => 'datetime',
+        'completed_at'  => 'datetime',
     ];
 
     public function sender(): BelongsTo

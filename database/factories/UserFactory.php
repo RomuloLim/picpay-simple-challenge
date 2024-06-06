@@ -27,13 +27,13 @@ class UserFactory extends Factory
         $userType = fake()->randomElement([UserType::Common, UserType::Logistic]);
 
         return [
-            'name' => fake()->name(),
-            'email' => fake()->unique()->safeEmail(),
-            'identifier' => $userType === UserType::Common ? fake('pt_BR')->unique()->cpf(false) : fake('pt_BR')->unique()->cnpj(false),
-            'type' => $userType,
+            'name'              => fake()->name(),
+            'email'             => fake()->unique()->safeEmail(),
+            'identifier'        => $userType === UserType::Common ? fake('pt_BR')->unique()->cpf(false) : fake('pt_BR')->unique()->cnpj(false),
+            'type'              => $userType,
             'email_verified_at' => now(),
-            'password' => static::$password ??= Hash::make('password'),
-            'remember_token' => Str::random(10),
+            'password'          => static::$password ??= Hash::make('password'),
+            'remember_token'    => Str::random(10),
         ];
     }
 
@@ -53,7 +53,7 @@ class UserFactory extends Factory
     public function common(): static
     {
         return $this->state(fn (array $attributes) => [
-            'type' => UserType::Common,
+            'type'       => UserType::Common,
             'identifier' => fake()->unique()->cpf(false),
         ]);
     }
@@ -64,7 +64,7 @@ class UserFactory extends Factory
     public function logistic(): static
     {
         return $this->state(fn (array $attributes) => [
-            'type' => UserType::Logistic,
+            'type'       => UserType::Logistic,
             'identifier' => fake()->unique()->cnpj(false),
         ]);
     }

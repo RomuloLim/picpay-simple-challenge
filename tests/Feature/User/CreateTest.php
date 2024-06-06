@@ -6,8 +6,7 @@ use App\Enums\UserType;
 use App\Http\Requests\User\CreateRequest;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
-use Illuminate\Support\Facades\Event;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\{Event, Validator};
 use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
@@ -19,14 +18,16 @@ class CreateTest extends TestCase
 
         Event::fake();
 
-        Event::assertNotDispatched(Registered::class);
+        Event::assertNotDispatched(
+            Registered::class
+        );
 
         $response = $this->postJson(route('user.store'), [
-            'name' => $user->name,
-            'email' => $user->email,
-            'identifier' => $user->identifier,
-            'type' => $user->type,
-            'password' => 'password',
+            'name'                  => $user->name,
+            'email'                 => $user->email,
+            'identifier'            => $user->identifier,
+            'type'                  => $user->type,
+            'password'              => 'password',
             'password_confirmation' => 'password',
         ]);
 
@@ -43,16 +44,16 @@ class CreateTest extends TestCase
         ]);
 
         $this->assertDatabaseHas(User::class, [
-            'name' => $user->name,
-            'email' => $user->email,
+            'name'       => $user->name,
+            'email'      => $user->email,
             'identifier' => $user->identifier,
-            'type' => $user->type,
+            'type'       => $user->type,
         ]);
 
         $user = User::whereEmail($user->email)->first();
 
         $this->assertTrue(password_verify('password', $user->password));
-        $this->assertTrue(!$user->hasVerifiedEmail());
+        $this->assertTrue(! $user->hasVerifiedEmail());
 
         Event::assertDispatched(Registered::class);
     }
@@ -79,11 +80,11 @@ class CreateTest extends TestCase
         $duplicateUser = User::factory()->make(['identifier' => $user->identifier]);
 
         $response = $this->postJson(route('user.store'), [
-            'name' => $duplicateUser->name,
-            'email' => $duplicateUser->email,
-            'identifier' => $duplicateUser->identifier,
-            'type' => $duplicateUser->type,
-            'password' => 'password',
+            'name'                  => $duplicateUser->name,
+            'email'                 => $duplicateUser->email,
+            'identifier'            => $duplicateUser->identifier,
+            'type'                  => $duplicateUser->type,
+            'password'              => 'password',
             'password_confirmation' => 'password',
         ]);
 
@@ -104,11 +105,11 @@ class CreateTest extends TestCase
         $duplicateUser = User::factory()->make(['email' => $user->email]);
 
         $response = $this->postJson(route('user.store'), [
-            'name' => $duplicateUser->name,
-            'email' => $duplicateUser->email,
-            'identifier' => $duplicateUser->identifier,
-            'type' => $duplicateUser->type,
-            'password' => 'password',
+            'name'                  => $duplicateUser->name,
+            'email'                 => $duplicateUser->email,
+            'identifier'            => $duplicateUser->identifier,
+            'type'                  => $duplicateUser->type,
+            'password'              => 'password',
             'password_confirmation' => 'password',
         ]);
 
@@ -125,11 +126,11 @@ class CreateTest extends TestCase
     public static function invalidUsers()
     {
         $validUser = [
-            'name' => 'Test',
-            'email' => 'test@mail.com',
-            'identifier' => '12345678909',
-            'type' => UserType::Common,
-            'password' => 'password',
+            'name'                  => 'Test',
+            'email'                 => 'test@mail.com',
+            'identifier'            => '12345678909',
+            'type'                  => UserType::Common,
+            'password'              => 'password',
             'password_confirmation' => 'password',
         ];
 
