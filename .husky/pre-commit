@@ -10,7 +10,7 @@ BIBlack="\033[1;90m"
 
 # Rodar o phpstan
 
-echo "${BIYellow} ⚗️ Fazendo análise estática... ${NC}"
+echo "\n\n${BIYellow} ⚗️ Fazendo análise estática... ${NC}\n"
 ./vendor/bin/phpstan
 if [ $? -ne 0 ];
 then
@@ -19,7 +19,7 @@ then
 fi;
 
 # rodar os testes
-echo "${BIYellow} 📋 Rodando testes... ${NC}"
+echo "${BIYellow} 📋 Rodando testes... ${NC}\n"
 if ! php artisan test --parallel --stop-on-failure --testdox;
 then
     echo "\n\n${BGRed}                                                                      ${NC}";
@@ -29,7 +29,7 @@ then
 fi;
 
 # Formatar cada arquivo alterado usando o Laravel Pint
-echo "${BIYellow} 🎨 Formatando código... ${NC}"
+echo "\n\n${BIYellow} 🎨 Formatando código... ${NC}\n"
 STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep ".php\{0,1\}$") || true
 
 for FILE in $STAGED_FILES
