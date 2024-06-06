@@ -24,11 +24,11 @@ class CreateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'max:255', 'min:3'],
+            'name'       => ['required', 'string', 'max:255', 'min:3'],
             'identifier' => ['required', 'cpf_cnpj', 'unique:users,identifier'],
-            'email' => ['required', 'email', 'unique:users,email'],
-            'password' => ['required', 'string', 'confirmed'],
-            'type' => ['required', new Enum(UserType::class)],
+            'email'      => ['required', 'email', 'unique:users,email'],
+            'password'   => ['required', 'string', 'confirmed'],
+            'type'       => ['required', new Enum(UserType::class)],
         ];
     }
 }
