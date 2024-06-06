@@ -18,7 +18,9 @@ class CreateTest extends TestCase
 
         Event::fake();
 
-        Event::assertNotDispatched(Registered::class);
+        Event::assertNotDispatched(
+            Registered::class
+        );
 
         $response = $this->postJson(route('user.store'), [
             'name'                  => $user->name,
