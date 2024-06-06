@@ -3,11 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\User\CreateRequest;
+use App\Http\Resources\UserResource;
+use App\Models\User;
+
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Resources\Json\JsonResource;
-
-use App\Models\User;
-use App\Http\Resources\UserResource;
 
 class UserController extends Controller
 {

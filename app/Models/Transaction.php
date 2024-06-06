@@ -22,7 +22,7 @@ class Transaction extends Model
 
     protected $casts = [
         'is_successful' => 'boolean',
-        'completed_at' => 'datetime',
+        'completed_at'  => 'datetime',
     ];
 
     public function sender(): BelongsTo
