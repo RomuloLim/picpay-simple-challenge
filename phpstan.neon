@@ -1,0 +1,25 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+
+parameters:
+    scanFiles:
+        - _ide_helper.php
+        - _ide_helper_models.php
+#        - .phpstorm.meta.php
+
+    paths:
+        - app/
+
+    # Level 9 is the highest level
+    level: 5
+
+    ignoreErrors:
+#        - '#^Call to an undefined method Illuminate\\#'
+#        - '#^Access to undefined constant Illuminate\\#'
+        - '#Access to an undefined property App\\Http\\Resources\\[a-zA-Z0-9::a-zA-Z]#'
+
+
+    excludePaths:
+        - ./app/Console/Commands/playground.php
+#
+#    checkMissingIterableValueType: false
