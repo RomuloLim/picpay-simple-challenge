@@ -23,7 +23,7 @@ class CreateTest extends TestCase
         );
 
         $response = $this->postJson(route('user.store'), [
-            'name'=> $user->name,
+            'name'                  => $user->name,
             'email'                 => $user->email,
             'identifier'            => $user->identifier,
             'type'                  => $user->type,
