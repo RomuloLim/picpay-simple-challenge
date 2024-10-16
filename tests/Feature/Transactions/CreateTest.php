@@ -42,6 +42,34 @@ class CreateTest extends TestCase
 
     public function test_cannot_transfer_if_user_is_a_logistic()
     {
+        $balance = rand(1, 10000);
+
+        $commonUser = User::factory()->common()->create();
+        $logisticUser = User::factory()->logistic()->create([
+            'balance' => $balance,
+        ]);
+
+        $response = $this->postJson(route('transaction.store'), [
+            'sender_id'   => $logisticUser->id,
+            'receiver_id' => $commonUser->id,
+            'amount'      => rand(1, $balance),
+            'description' => 'Logistic transferring to another user',
+        ]);
+
+        $response
+            ->assertUnprocessable()
+            ->assertJsonStructure([
+                'message',
+                'errors',
+            ])
+            ->assertJsonValidationErrors([
+                'sender_id',
+            ])
+            ->assertJson([
+                'message' => 'Logistic users cannot transfer money',
+            ]);
+
+        $this->assertDatabaseEmpty('transactions');
     }
 
     public function test_cannot_transfer_if_user_has_no_balance()
