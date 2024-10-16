@@ -127,15 +127,15 @@ class CreateTest extends TestCase
         ]);
     }
 
+    public function test_revert_transfer_when_found_errors()
+    {
+    }
+
     public function test_fail_transfer_if_external_authorizer_is_down()
     {
     }
 
     public function test_fail_transfer_if_external_authorizer_returns_false()
-    {
-    }
-
-    public function test_revert_transfer_when_found_errors()
     {
     }
 }
