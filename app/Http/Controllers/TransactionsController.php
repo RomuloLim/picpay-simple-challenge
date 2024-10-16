@@ -9,6 +9,9 @@ use Illuminate\Support\Facades\DB;
 
 class TransactionsController extends Controller
 {
+    /**
+     * @throws \Throwable
+     */
     public function store(CreateTransactionRequest $request)
     {
         $transactionState = DB::transaction(function () use ($request) {
@@ -24,13 +27,17 @@ class TransactionsController extends Controller
             } else {
                 $transaction->update([
                     'is_successful'  => false,
-                    'failure_reason' => 'Insufficient balance',
+                    'failure_reason' => 'Insufficient funds on payment method.',
                     'completed_at'   => now(),
                 ]);
             }
 
             return $transaction->refresh();
         });
+
+        if (!$transactionState->is_successful) {
+            return response()->json($transactionState, Response::HTTP_BAD_REQUEST);
+        }
 
         return response()->json($transactionState, Response::HTTP_ACCEPTED);
     }
