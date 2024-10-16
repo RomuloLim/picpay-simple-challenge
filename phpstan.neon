@@ -16,7 +16,7 @@ parameters:
     ignoreErrors:
 #        - '#^Call to an undefined method Illuminate\\#'
 #        - '#^Access to undefined constant Illuminate\\#'
-        - '#Access to an undefined property App\\Http\\Resources\\[a-zA-Z0-9::a-zA-Z]#'
+#        - '#Access to an undefined property App\\Http\\Resources\\[a-zA-Z0-9::a-zA-Z]#'
 
 
     excludePaths:
