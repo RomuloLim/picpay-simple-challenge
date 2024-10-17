@@ -27,6 +27,6 @@ class playground extends Command
      */
     public function handle()
     {
-        Mail::to('test@example.com')->sendNow(new TestMail());
+        ds('test');
     }
 }

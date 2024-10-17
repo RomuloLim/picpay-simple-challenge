@@ -11,7 +11,7 @@ BIBlack="\033[1;90m"
 # Rodar o phpstan
 
 echo "\n\n${BIYellow} ⚗️ Fazendo análise estática... ${NC}\n"
-./vendor/bin/phpstan
+    ./vendor/bin/phpstan
 if [ $? -ne 0 ];
 then
     echo "${BGreen} Erros foram encontrados no PHPStan. Corrija antes de continuar... 👮🏽 ${NC}";
@@ -20,7 +20,8 @@ fi;
 
 # rodar os testes
 echo "${BIYellow} 📋 Rodando testes... ${NC}\n"
-if ! php artisan test --parallel --stop-on-failure --testdox;
+#if ! php artisan test --parallel --stop-on-failure --testdox;
+if ! ./vendor/bin/sail artisan test --stop-on-failure --testdox;
 then
     echo "\n\n${BGRed}                                                                      ${NC}";
     echo "${BGRed} Opa! os testes encontraram erros. Corrija antes de continuar... 👮🏽 ${NC}";
