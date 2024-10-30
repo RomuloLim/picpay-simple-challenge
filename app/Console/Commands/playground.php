@@ -2,6 +2,8 @@
 
 namespace App\Console\Commands;
 
+use App\Enums\ErrorCodes;
+use App\Exceptions\ExternalSericeException;
 use App\Mail\TestMail;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Mail;
@@ -27,6 +29,5 @@ class playground extends Command
      */
     public function handle()
     {
-        ds('test');
     }
 }

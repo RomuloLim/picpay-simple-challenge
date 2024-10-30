@@ -2,11 +2,11 @@
 
 namespace Tests;
 
-use Illuminate\Foundation\Testing\{RefreshDatabase, TestCase as BaseTestCase};
+use Illuminate\Foundation\Testing\{DatabaseTransactions, TestCase as BaseTestCase};
 
 abstract class TestCase extends BaseTestCase
 {
-    use RefreshDatabase;
+    use DatabaseTransactions;
 
     //    protected $seed = true;
 }

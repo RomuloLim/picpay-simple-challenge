@@ -3,12 +3,26 @@
 namespace Tests\Feature\Transactions;
 
 use App\Models\User;
+use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
 class CreateTest extends TestCase
 {
+    private function externalServiceMock($successfully = true)
+    {
+        $externalServiceUrl = config('external_services.authorization_url');
+
+        Http::fake([
+            $externalServiceUrl => Http::response([
+                'status' => $successfully ? 'success': 'fail',
+                'data' => ['authorization' => !$successfully]
+            ]),
+        ]);
+    }
+
     public function test_can_transfer_to_another_user()
     {
+        $this->externalServiceMock();
         $balance = rand(1, 10000);
 
         $user = User::factory()->common()->count(2)->create([
@@ -42,6 +56,7 @@ class CreateTest extends TestCase
 
     public function test_cannot_transfer_if_user_is_a_logistic()
     {
+        $this->externalServiceMock();
         $balance = rand(1, 10000);
 
         $commonUser = User::factory()->common()->create();
@@ -74,6 +89,7 @@ class CreateTest extends TestCase
 
     public function test_cannot_transfer_if_user_has_no_sufficient_balance()
     {
+        $this->externalServiceMock();
         $balance = rand(1, 10000);
 
         $user = User::factory()->common()->count(2)->create([
@@ -127,12 +143,11 @@ class CreateTest extends TestCase
         ]);
     }
 
-    public function test_revert_transfer_when_found_errors()
-    {
-    }
-
     public function test_fail_transfer_if_external_authorizer_is_down()
     {
+        $this->externalServiceMock(false);
+
+        dd(Http::get(config('external_services.authorization_url'))->json());
     }
 
     public function test_fail_transfer_if_external_authorizer_returns_false()
