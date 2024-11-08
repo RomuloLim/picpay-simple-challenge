@@ -14,8 +14,8 @@ class CreateTest extends TestCase
 
         Http::fake([
             $externalServiceUrl => Http::response([
-                'status' => $successfully ? 'success': 'fail',
-                'data' => ['authorization' => !$successfully]
+                'status' => $successfully ? 'success' : 'fail',
+                'data'   => ['authorization' => $successfully],
             ]),
         ]);
     }
@@ -59,7 +59,7 @@ class CreateTest extends TestCase
         $this->externalServiceMock();
         $balance = rand(1, 10000);
 
-        $commonUser = User::factory()->common()->create();
+        $commonUser   = User::factory()->common()->create();
         $logisticUser = User::factory()->logistic()->create([
             'balance' => $balance,
         ]);
@@ -146,11 +146,7 @@ class CreateTest extends TestCase
     public function test_fail_transfer_if_external_authorizer_is_down()
     {
         $this->externalServiceMock(false);
-
-        dd(Http::get(config('external_services.authorization_url'))->json());
     }
 
-    public function test_fail_transfer_if_external_authorizer_returns_false()
-    {
-    }
+    public function test_fail_transfer_if_external_authorizer_returns_false() {}
 }

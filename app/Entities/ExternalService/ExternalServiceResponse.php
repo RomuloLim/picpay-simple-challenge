@@ -2,14 +2,17 @@
 
 namespace App\Entities\ExternalService;
 
+use Illuminate\Http\Client\Response;
+
 class ExternalServiceResponse
 {
-    public string $status;
-    public ExternalServiceData $data;
+    public Response $response;
 
-    public function __construct(array $data)
+    public ExternalServiceResponseData $data;
+
+    public function __construct(Response $response)
     {
-        $this->status = $data['status'];
-        $this->data = new ExternalServiceData($data['data']);
+        $this->response = $response;
+        $this->data     = new ExternalServiceResponseData($response->json());
     }
 }
