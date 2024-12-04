@@ -2,13 +2,14 @@
 
 namespace Tests\Feature\Transactions;
 
+use App\Enums\ErrorCodes;
 use App\Models\User;
 use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
 class CreateTest extends TestCase
 {
-    private function externalServiceMock($successfully = true)
+    private function externalServiceMock($successfully = true, $statusCode = 200)
     {
         $externalServiceUrl = config('external_services.authorization_url');
 
@@ -16,7 +17,7 @@ class CreateTest extends TestCase
             $externalServiceUrl => Http::response([
                 'status' => $successfully ? 'success' : 'fail',
                 'data'   => ['authorization' => $successfully],
-            ]),
+            ], $statusCode),
         ]);
     }
 
@@ -109,7 +110,7 @@ class CreateTest extends TestCase
             ->assertBadRequest()
             ->assertJsonFragment([
                 'is_successful'  => false,
-                'failure_reason' => 'Insufficient funds on payment method.',
+                'failure_reason' => ErrorCodes::INSUFFICIENT_FUNDS->getMessage(),
                 'sender_id'      => $user[0]->id,
                 'receiver_id'    => $user[1]->id,
             ])
@@ -126,7 +127,7 @@ class CreateTest extends TestCase
         $this->assertDatabaseHas('transactions', [
             ...$responseData,
             'is_successful'  => false,
-            'failure_reason' => 'Insufficient funds on payment method.',
+            'failure_reason' => ErrorCodes::INSUFFICIENT_FUNDS->getMessage(),
             'completed_at'   => $response->json('completed_at'),
         ]);
 
@@ -145,8 +146,115 @@ class CreateTest extends TestCase
 
     public function test_fail_transfer_if_external_authorizer_is_down()
     {
-        $this->externalServiceMock(false);
+        $this->externalServiceMock(false, 500);
+
+        $balance = rand(1, 10000);
+
+        $user = User::factory()->common()->count(2)->create([
+            'balance' => $balance,
+        ]);
+
+        $responseData = [
+            'sender_id'   => $user[0]->id,
+            'receiver_id' => $user[1]->id,
+            'amount'      => $balance,
+            'description' => 'Transfer to another user',
+        ];
+
+        $response = $this->postJson(route('transaction.store'), $responseData);
+
+        $response
+            ->assertBadRequest()
+            ->assertJsonFragment([
+                'is_successful'  => false,
+                'failure_reason' => ErrorCodes::EXTERNAL_SERVICE_UNAVAILABLE->getMessage(),
+                'sender_id'      => $user[0]->id,
+                'receiver_id'    => $user[1]->id,
+            ])
+            ->assertJsonStructure([
+                'sender_id',
+                'receiver_id',
+                'amount',
+                'description',
+                'is_successful',
+                'failure_reason',
+                'completed_at',
+            ]);
+
+        $this->assertDatabaseHas('transactions', [
+            ...$responseData,
+            'is_successful'  => false,
+            'failure_reason' => ErrorCodes::EXTERNAL_SERVICE_UNAVAILABLE->getMessage(),
+            'completed_at'   => $response->json('completed_at'),
+        ]);
+
+        $this->assertDatabaseCount('transactions', 1);
+
+        $this->assertDatabaseHas('users', [
+            'id'      => $user[0]->id,
+            'balance' => $balance,
+        ]);
+
+        $this->assertDatabaseHas('users', [
+            'id'      => $user[1]->id,
+            'balance' => $balance,
+        ]);
     }
 
-    public function test_fail_transfer_if_external_authorizer_returns_false() {}
+    public function test_fail_transfer_if_external_authorizer_returns_false()
+    {
+        $this->externalServiceMock(false);
+
+        $balance = rand(1, 10000);
+
+        $user = User::factory()->common()->count(2)->create([
+            'balance' => $balance,
+        ]);
+
+        $responseData = [
+            'sender_id'   => $user[0]->id,
+            'receiver_id' => $user[1]->id,
+            'amount'      => $balance,
+            'description' => 'Transfer to another user',
+        ];
+
+        $response = $this->postJson(route('transaction.store'), $responseData);
+
+        $response
+            ->assertBadRequest()
+            ->assertJsonFragment([
+                'is_successful'  => false,
+                'failure_reason' => ErrorCodes::UNAUTHORIZED_BY_EXTERNAL_SERVICE->getMessage(),
+                'sender_id'      => $user[0]->id,
+                'receiver_id'    => $user[1]->id,
+            ])
+            ->assertJsonStructure([
+                'sender_id',
+                'receiver_id',
+                'amount',
+                'description',
+                'is_successful',
+                'failure_reason',
+                'completed_at',
+            ]);
+
+        $this->assertDatabaseHas('transactions', [
+            ...$responseData,
+            'is_successful'  => false,
+            'failure_reason' => ErrorCodes::UNAUTHORIZED_BY_EXTERNAL_SERVICE->getMessage(),
+            'completed_at'   => $response->json('completed_at'),
+        ]);
+
+        $this->assertDatabaseCount('transactions', 1);
+
+        $this->assertDatabaseHas('users', [
+            'id'      => $user[0]->id,
+            'balance' => $balance,
+        ]);
+
+        $this->assertDatabaseHas('users', [
+            'id'      => $user[1]->id,
+            'balance' => $balance,
+        ]);
+    }
 }

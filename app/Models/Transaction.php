@@ -28,7 +28,7 @@ class Transaction extends Model
     protected $casts = [
         'is_successful' => 'boolean',
         'completed_at'  => 'datetime',
-        'error_code' => ErrorCodes::class
+        'error_code'    => ErrorCodes::class,
     ];
 
     public function sender(): BelongsTo

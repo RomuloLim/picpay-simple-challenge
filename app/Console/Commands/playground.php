@@ -25,6 +25,16 @@ class playground extends Command
      */
     public function handle()
     {
-        //
+        function fodase()
+        {
+            return [
+                'fodase1',
+                'fodasadwadawdae2',
+            ];
+        }
+
+        [$fodase1, $fodase2] = fodase();
+
+        dd($fodase1, $fodase2);
     }
 }

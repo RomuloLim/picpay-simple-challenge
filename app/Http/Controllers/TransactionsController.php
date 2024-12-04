@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Entities\ExternalService\ExternalServiceResponse;
 use App\Enums\ErrorCodes;
 use App\Exceptions\ExternalSericeException;
 use App\Http\Requests\Transaction\CreateTransactionRequest;
 use App\Models\Transaction;
+use App\Services\ExternalAuthorizerService;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\{DB, Http};
+use Illuminate\Support\Facades\{DB};
 
 class TransactionsController extends Controller
 {
@@ -22,12 +22,10 @@ class TransactionsController extends Controller
             $transaction = Transaction::create($request->validated())->load('sender', 'receiver');
 
             if ($transaction->sender->balance >= $transaction->amount) {
-                $responseData = new ExternalServiceResponse(Http::get(config('external_services.authorization_url'))); //todo: convert to service
+                $responseData = ExternalAuthorizerService::checkTransaction();
 
-                if ($responseData->response->failed()) {
-                    $errorCode = ErrorCodes::EXTERNAL_SERVICE_UNAVAILABLE;
-                } elseif (! $responseData->data->authorization) {
-                    $errorCode = ErrorCodes::UNAUTHORIZED_BY_EXTERNAL_SERVICE;
+                if ($responseData instanceof ErrorCodes) {
+                    $errorCode = $responseData;
                 }
 
                 if ($errorCode) {

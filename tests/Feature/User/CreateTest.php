@@ -61,7 +61,7 @@ class CreateTest extends TestCase
     #[DataProvider('invalidUsers')]
     public function test_fail_creation_with_invalid_payload(array $invalidData)
     {
-        $request = new CreateRequest();
+        $request = new CreateRequest;
 
         $response = $this->postJson(route('user.store'), $invalidData);
 
