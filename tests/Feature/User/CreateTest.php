@@ -12,7 +12,7 @@ use Tests\TestCase;
 
 class CreateTest extends TestCase
 {
-    public function testUserCreationWithValidData()
+    public function test_user_creation_with_valid_payload()
     {
         $user = User::factory()->unverified()->make();
 
@@ -59,9 +59,9 @@ class CreateTest extends TestCase
     }
 
     #[DataProvider('invalidUsers')]
-    public function testFailCreationWithInvalidData(array $invalidData)
+    public function test_fail_creation_with_invalid_payload(array $invalidData)
     {
-        $request = new CreateRequest();
+        $request = new CreateRequest;
 
         $response = $this->postJson(route('user.store'), $invalidData);
 
@@ -73,7 +73,7 @@ class CreateTest extends TestCase
         $this->assertFalse($validator->passes());
     }
 
-    public function testFailCreationWithNotUniqueIdentifier()
+    public function test_fail_creation_with_not_unique_identifier()
     {
         $user = User::factory()->create();
 
@@ -98,7 +98,7 @@ class CreateTest extends TestCase
         $this->assertDatabaseCount(User::class, 1);
     }
 
-    public function testFailCreationWithNotUniqueEmail()
+    public function test_fail_creation_with_not_unique_email()
     {
         $user = User::factory()->create();
 

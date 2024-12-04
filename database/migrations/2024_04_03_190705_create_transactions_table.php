@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('description')->nullable();
             $table->boolean('is_successful')->default(false);
             $table->string('failure_reason')->nullable();
+            $table->tinyText('error_code')->nullable();
             $table->timestamp('completed_at')->nullable();
             $table->timestamps();
         });

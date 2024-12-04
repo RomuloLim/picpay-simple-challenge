@@ -2,9 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Mail\TestMail;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Mail;
 
 class playground extends Command
 {
@@ -27,6 +25,6 @@ class playground extends Command
      */
     public function handle()
     {
-        Mail::to('test@example.com')->sendNow(new TestMail());
+        //
     }
 }

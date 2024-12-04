@@ -24,7 +24,7 @@ class UserFactory extends Factory
      */
     public function definition(): array
     {
-        $userType = fake()->randomElement([UserType::Common, UserType::Logist]);
+        $userType = fake()->randomElement([UserType::Common, UserType::Logistic]);
 
         return [
             'name'              => fake()->name(),
@@ -34,6 +34,7 @@ class UserFactory extends Factory
             'email_verified_at' => now(),
             'password'          => static::$password ??= Hash::make('password'),
             'remember_token'    => Str::random(10),
+            'balance'           => rand(0, 10000),
         ];
     }
 
@@ -61,10 +62,10 @@ class UserFactory extends Factory
     /**
      * Indicate that the model's type is common.
      */
-    public function logist(): static
+    public function logistic(): static
     {
         return $this->state(fn (array $attributes) => [
-            'type'       => UserType::Logist,
+            'type'       => UserType::Logistic,
             'identifier' => fake()->unique()->cnpj(false),
         ]);
     }
